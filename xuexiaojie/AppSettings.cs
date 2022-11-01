@@ -11,7 +11,7 @@ namespace xuexiaojie
             var section = appSetting.GetSection(key);
             if (section != null)
             {
-                return section.Value;
+                return section.Value;//返回节点的值
             }
             else
             {

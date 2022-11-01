@@ -16,7 +16,7 @@ namespace xuexiaojie.Controllers
             var data = new item();
             using (MyDbContext db = new MyDbContext())
             {
-                data =  db.item.Single(t => t.title == title);                
+                data =  db.item.SingleOrDefault(t => t.title == title);                
             }
             return data;
         }
@@ -37,7 +37,7 @@ namespace xuexiaojie.Controllers
                 order.TotalAmount = num * price;
                 db.Update(data);
                 db.Add(order);
-                db.SaveChangesAsync();            
+                await db.SaveChangesAsync();   //需要await，不然using里的代码块完结后，线程上下文中的数据会被释放掉，有时候会保持失败  
             }
             return "操作成功";
         }
@@ -49,14 +49,14 @@ namespace xuexiaojie.Controllers
                 return "商品名称不能为空";
             using (MyDbContext db = new MyDbContext())
             {
-                var data = db.item.Single(t => t.title == title);
+                var data = db.item.SingleOrDefault(t => t.title == title);//查询不到时复制默认值，避免报错
                 if (data == null)
                     return "找不到该商品信息";
                 data.title = title;
                 data.price = price;
                 data.num = num;
                 db.Update(data);
-                db.SaveChangesAsync();
+                await db.SaveChangesAsync();
             }
             return  "修改成功";
         }
